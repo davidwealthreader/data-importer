@@ -26,6 +26,7 @@ namespace App\Api\Controllers\ImportFlow;
 
 use App\Api\Controllers\Controller;
 use App\Services\EnableBanking\AuthenticationValidator as EnableBankingValidator;
+use App\Services\Wealthreader\AuthenticationValidator as WealthreaderValidator;
 use App\Services\Enums\AuthenticationStatus;
 use App\Services\LunchFlow\AuthenticationValidator as LunchFlowValidator;
 use App\Services\Nordigen\AuthenticationValidator as NordigenValidator;
@@ -44,6 +45,7 @@ final class ValidationController extends Controller
             'lunchflow'              => $this->validateLunchFlow(),
             'sophtron'               => $this->validateSophtron(),
             'eb'                     => $this->validateEnableBanking(),
+            'wr'                     => $this->validateWealthreader(),
             'file'                   => response()->json(['result' => 'OK']),
             default                  => response()->json(['result' => 'NOK', 'message' => 'Unknown provider'])
         };
@@ -146,6 +148,21 @@ final class ValidationController extends Controller
             return response()->json(['result' => 'NODATA']);
         }
         Log::info(sprintf('[%s] All OK in validateEnableBanking.', config('importer.version')));
+
+        return response()->json(['result' => 'OK']);
+    }
+
+    private function validateWealthreader(): JsonResponse
+    {
+        $validator = new WealthreaderValidator();
+        $result    = $validator->validate();
+
+        if (AuthenticationStatus::ERROR === $result) {
+            return response()->json(['result' => 'NOK']);
+        }
+        if (AuthenticationStatus::NODATA === $result) {
+            return response()->json(['result' => 'NODATA']);
+        }
 
         return response()->json(['result' => 'OK']);
     }

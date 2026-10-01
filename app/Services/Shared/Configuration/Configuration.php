@@ -102,6 +102,10 @@ final class Configuration
     private string $enableBankingAuthId   = '';
     private array  $enableBankingSessions = [];
 
+    private string $wealthreaderCountry = '';
+    private string $wealthreaderBank    = '';
+    private string $wealthreaderToken   = '';
+
     // what type of import?
     private array $roles                  = [];
 
@@ -160,6 +164,9 @@ final class Configuration
         $this->enableBankingBank           = '';
         $this->enableBankingAuthId         = '';
         $this->enableBankingSessions       = [];
+        $this->wealthreaderCountry         = '';
+        $this->wealthreaderBank            = '';
+        $this->wealthreaderToken           = '';
 
         // spectre
         $this->identifier                  = '0';
@@ -425,6 +432,9 @@ final class Configuration
         $object->enableBankingBank           = $array['enable_banking_bank'] ?? '';
         $object->enableBankingAuthId         = $array['enable_banking_auth_id'] ?? '';
         $object->enableBankingSessions       = $array['enable_banking_sessions'] ?? [];
+        $object->wealthreaderCountry         = $array['wealthreader_country'] ?? '';
+        $object->wealthreaderBank            = $array['wealthreader_bank'] ?? '';
+        $object->wealthreaderToken           = $array['wealthreader_token'] ?? '';
 
         // simplefin
         $object->pendingTransactions         = $array['pending_transactions'] ?? true;
@@ -539,6 +549,9 @@ final class Configuration
         $object->enableBankingBank           = $array['enable_banking_bank'] ?? '';
         $object->enableBankingAuthId         = $array['enable_banking_auth_id'] ?? '';
         $object->enableBankingSessions       = $array['enable_banking_sessions'] ?? [];
+        $object->wealthreaderCountry         = $array['wealthreader_country'] ?? '';
+        $object->wealthreaderBank            = $array['wealthreader_bank'] ?? '';
+        $object->wealthreaderToken           = $array['wealthreader_token'] ?? '';
 
         $object->groupedTransactionHandling  = $array['grouped_transaction_handling'] ?? 'single';
         $object->useEntireOpposingAddress    = $array['use_entire_opposing_address'] ?? false;
@@ -862,6 +875,36 @@ final class Configuration
         $this->enableBankingSessions = [];
     }
 
+    public function getWealthreaderCountry(): string
+    {
+        return $this->wealthreaderCountry;
+    }
+
+    public function setWealthreaderCountry(string $wealthreaderCountry): void
+    {
+        $this->wealthreaderCountry = $wealthreaderCountry;
+    }
+
+    public function getWealthreaderBank(): string
+    {
+        return $this->wealthreaderBank;
+    }
+
+    public function setWealthreaderBank(string $wealthreaderBank): void
+    {
+        $this->wealthreaderBank = $wealthreaderBank;
+    }
+
+    public function getWealthreaderToken(): string
+    {
+        return $this->wealthreaderToken;
+    }
+
+    public function setWealthreaderToken(string $wealthreaderToken): void
+    {
+        $this->wealthreaderToken = $wealthreaderToken;
+    }
+
     public function getRoles(): array
     {
         return $this->roles;
@@ -1087,6 +1130,9 @@ final class Configuration
             'enable_banking_bank'          => $this->enableBankingBank,
             'enable_banking_auth_id'       => $this->enableBankingAuthId,
             'enable_banking_sessions'      => $this->enableBankingSessions,
+            'wealthreader_country'         => $this->wealthreaderCountry,
+            'wealthreader_bank'            => $this->wealthreaderBank,
+            'wealthreader_token'           => $this->wealthreaderToken,
 
             // utf8
             'conversion'                   => $this->conversion,

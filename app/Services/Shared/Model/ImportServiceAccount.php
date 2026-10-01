@@ -27,6 +27,7 @@ namespace App\Services\Shared\Model;
 use App\Exceptions\ImporterErrorException;
 use App\Services\CSV\Converter\Iban as IbanConverter;
 use App\Services\EnableBanking\Model\Account as EnableBankingAccount;
+use App\Services\Wealthreader\Model\Account as WealthreaderAccount;
 use App\Services\LunchFlow\Model\Account as LunchFlowAccount;
 use App\Services\Nordigen\Model\Account as NordigenAccount;
 use App\Services\Nordigen\Model\Balance;
@@ -143,6 +144,27 @@ final class ImportServiceAccount
                     'Currency'     => $account->getCurrency(),
                     'IBAN'         => $iban,
                     'BBAN'         => $account->getBban(),
+                ],
+            ]);
+        }
+        if ($account instanceof WealthreaderAccount) {
+            $iban = $account->iban;
+            if ('' !== $iban && false === IbanConverter::isValidIban($iban)) {
+                $iban = '';
+            }
+
+            return self::fromArray([
+                'id'            => $account->uuid,
+                'name'          => $account->name,
+                'currency_code' => $account->currency,
+                'iban'          => $iban,
+                'bban'          => '',
+                'status'        => '',
+                'extra'         => [
+                    'Currency' => $account->currency,
+                    'IBAN'     => $iban,
+                    'Type'     => $account->subtype,
+                    'Balance'  => $account->balance,
                 ],
             ]);
         }
@@ -371,6 +393,35 @@ final class ImportServiceAccount
                 $current->extra[$key] = $balance['amount'] ?? '';
             }
             $return[] = $current;
+        }
+
+        return $return;
+    }
+
+    public static function convertWealthreaderArray(array $accounts): array
+    {
+        $return = [];
+
+        /** @var WealthreaderAccount $account */
+        foreach ($accounts as $account) {
+            $iban = $account->iban;
+            if ('' !== $iban && false === IbanConverter::isValidIban($iban)) {
+                $iban = '';
+            }
+            $return[] = self::fromArray([
+                'id'            => $account->uuid,
+                'name'          => $account->name,
+                'currency_code' => $account->currency,
+                'iban'          => $iban,
+                'bban'          => '',
+                'status'        => '',
+                'extra'         => [
+                    'Currency' => $account->currency,
+                    'IBAN'     => $iban,
+                    'Type'     => $account->subtype,
+                    'Balance'  => $account->balance,
+                ],
+            ]);
         }
 
         return $return;

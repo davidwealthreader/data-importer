@@ -52,7 +52,7 @@ let bankSelection = function () {
                 }
             }
 
-            if (this.flow === 'eb') {
+            if (this.flow === 'eb' || this.flow === 'wr') {
                 this.initEnableBanking();
             }
 

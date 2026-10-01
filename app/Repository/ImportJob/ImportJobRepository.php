@@ -28,6 +28,7 @@ use App\Exceptions\ImporterErrorException;
 use App\Models\ImportJob;
 use App\Services\CSV\Mapper\TransactionCurrencies;
 use App\Services\EnableBanking\Validation\NewJobDataCollector as EnableBankingNewJobDataCollector;
+use App\Services\Wealthreader\Validation\NewJobDataCollector as WealthreaderNewJobDataCollector;
 use App\Services\LunchFlow\Validation\NewJobDataCollector as LunchFlowNewJobDataCollector;
 use App\Services\Nordigen\Validation\NewJobDataCollector as NordigenNewJobDataCollector;
 use App\Services\Session\Constants;
@@ -213,6 +214,15 @@ final class ImportJobRepository
 
             case 'eb':
                 $validator     = new EnableBankingNewJobDataCollector();
+                $validator->setImportJob($importJob);
+                $messageBag    = $validator->collectAccounts();
+                $importJob     = $validator->getImportJob();
+                $configuration = $importJob->getConfiguration();
+
+                break;
+
+            case 'wr':
+                $validator     = new WealthreaderNewJobDataCollector();
                 $validator->setImportJob($importJob);
                 $messageBag    = $validator->collectAccounts();
                 $importJob     = $validator->getImportJob();

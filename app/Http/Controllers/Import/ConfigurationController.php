@@ -96,6 +96,12 @@ final class ConfigurationController extends Controller
 
                     return redirect()->route('eb-select-bank.index', [$identifier]);
                 }
+                if ($messages->has('missing_token') && 'true' === (string) $messages->get('missing_token')[0]) {
+                    $importJob->setState('needs_connection_details');
+                    $this->repository->saveToDisk($importJob);
+
+                    return redirect()->route('wr-select-bank.index', [$identifier]);
+                }
                 if ($messages->has('expired_agreement') && 'true' === (string) $messages->get('expired_agreement')[0]) {
                     $importJob->setServiceAccounts([]);
                     $configuration = $importJob->getConfiguration();
@@ -106,6 +112,16 @@ final class ConfigurationController extends Controller
                     $redirect      = route('select-bank.index', [$identifier]);
 
                     return view('import.004-configure.gocardless-expired')->with(compact('mainTitle', 'subTitle', 'redirect'));
+                }
+                if ($messages->has('no_accounts') && 'wr' === $flow) {
+                    $importJob->setServiceAccounts([]);
+                    $configuration = $importJob->getConfiguration();
+                    $configuration->setWealthreaderToken('');
+                    $importJob->setConfiguration($configuration);
+                    $importJob->setState('needs_connection_details');
+                    $this->repository->saveToDisk($importJob);
+
+                    return redirect()->route('wr-select-bank.index', [$identifier])->withErrors($messages);
                 }
                 if ($messages->has('no_accounts') && 'eb' === $flow) {
                     $importJob->setServiceAccounts([]);
@@ -170,6 +186,7 @@ final class ConfigurationController extends Controller
             'lunchflow' => ImportServiceAccount::convertLunchFlowArray($serviceAccounts),
             'sophtron'  => ImportServiceAccount::convertSophtronArray($serviceAccounts),
             'eb'        => ImportServiceAccount::convertEnableBankingArray($serviceAccounts),
+            'wr'        => ImportServiceAccount::convertWealthreaderArray($serviceAccounts),
             'file'      => [],
             default     => throw new ImporterErrorException(sprintf('Cannot mergeAccountLists("%s")', $flow))
         };

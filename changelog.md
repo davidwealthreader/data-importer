@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+- Wealthreader as an AIS source (`wr`). Same shape as Enable Banking: pick bank, OAuth, callback. Self-hosters bring their own `WEALTHREADER_API_KEY`.
+
 ## v2.3.4 - 2026-06-30
 
 <!-- summary: This release fixes a crash in the Soptron import routine. -->

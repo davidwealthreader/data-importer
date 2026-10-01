@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Services\EnableBanking\AuthenticationValidator as EnableBankingValidator;
+use App\Services\Wealthreader\AuthenticationValidator as WealthreaderValidator;
 use App\Services\Enums\AuthenticationStatus;
 use App\Services\LunchFlow\AuthenticationValidator as LunchFlowValidator;
 use App\Services\Nordigen\AuthenticationValidator as NordigenValidator;
@@ -53,6 +54,7 @@ final class ServiceController extends Controller
             'simplefin'              => $this->validateSimpleFIN(),
             'lunchflow'              => $this->validateLunchFlow(),
             'eb'                     => $this->validateEnableBanking(),
+            'wr'                     => $this->validateWealthreader(),
             'file'                   => response()->json(['result' => 'OK']),
             default                  => response()->json(['result' => 'NOK', 'message' => 'Unknown provider'])
         };
@@ -118,6 +120,21 @@ final class ServiceController extends Controller
     public function validateEnableBanking(): JsonResponse
     {
         $validator = new EnableBankingValidator();
+        $result    = $validator->validate();
+
+        if (AuthenticationStatus::ERROR === $result) {
+            return response()->json(['result' => 'NOK']);
+        }
+        if (AuthenticationStatus::NODATA === $result) {
+            return response()->json(['result' => 'NODATA']);
+        }
+
+        return response()->json(['result' => 'OK']);
+    }
+
+    public function validateWealthreader(): JsonResponse
+    {
+        $validator = new WealthreaderValidator();
         $result    = $validator->validate();
 
         if (AuthenticationStatus::ERROR === $result) {

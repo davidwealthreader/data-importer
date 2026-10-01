@@ -17,6 +17,8 @@
                         <p>
                             @if($flow === 'eb')
                             Select your country and the bank you would like to import from using Enable Banking.
+                            @elseif($flow === 'wr')
+                            Select your country and the bank you would like to import from using Wealthreader.
                             @else
                             Select your country and the bank you would like to import from.
                             If you would like some support, <a href="https://docs.firefly-iii.org/how-to/data-importer/import/gocardless/"
@@ -47,7 +49,7 @@
             </div>
         </div>
         @endif
-        <form method="post" action="{{ $flow === 'eb' ? route('eb-select-bank.post', [$identifier]) : route('select-bank.post', [$identifier]) }}" accept-charset="UTF-8">
+        <form method="post" action="{{ $flow === 'eb' ? route('eb-select-bank.post', [$identifier]) : ($flow === 'wr' ? route('wr-select-bank.post', [$identifier]) : route('select-bank.post', [$identifier])) }}" accept-charset="UTF-8">
             <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
             <div class="row mt-3">
                 <div class="col-lg-10 offset-lg-1">
@@ -63,7 +65,7 @@
                                             name="country"
                                             x-model="selectedCountry">
                                         <option label="(no selection)" value="XX">(no selection)</option>
-                                        @if($flow === 'eb')
+                                        @if($flow === 'eb' || $flow === 'wr')
                                             @foreach($countries as $code => $name)
                                             <option label="{{ $name }}"
                                                     @if($code === $selectedCountry)selected="selected"@endif
@@ -108,6 +110,39 @@
                                                     @if($bank->name === $configuration->getEnableBankingBank())selected="selected"@endif
                                                     data-days="{{ intdiv($bank->maximumConsentValidity, 86400) }}"
                                                     value="{{ $bank->name }}">{{ $bank->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @elseif($flow === 'wr' && $response !== null)
+                <div class="row mt-3 bank-box" x-show="'{{ $selectedCountry }}' === selectedCountry && 'XX' !== selectedCountry">
+                    <div class="col-lg-10 offset-lg-1">
+                        <div class="card">
+                            <div class="card-header">
+                                Select your bank in {{ $selectedCountry }}
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group row">
+                                    <label for="bank_{{ $selectedCountry }}" class="col-sm-3 col-form-label">Bank ({{ $selectedCountry }})</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control bank-selector" name="bank_{{ $selectedCountry }}"
+                                                x-model="selectedBank">
+                                            <option label="(no bank)" value="XX" data-days="90">(no bank)</option>
+                                            @foreach($response as $bank)
+                                            @php
+                                                $code = is_array($bank) ? ($bank['code'] ?? '') : '';
+                                                $name = is_array($bank) ? ($bank['name'] ?? $code) : '';
+                                            @endphp
+                                            @if('' !== $code)
+                                            <option label="{{ $name }}"
+                                                    @if($code === $configuration->getWealthreaderBank())selected="selected"@endif
+                                                    data-days="90"
+                                                    value="{{ $code }}">{{ $name }}</option>
+                                            @endif
                                             @endforeach
                                         </select>
                                     </div>
@@ -180,7 +215,7 @@
                                     Number of days the connection is valid
                                 </label>
                                 <div class="col-sm-9">
-                                    @if($flow === 'eb')
+                                    @if($flow === 'eb' || $flow === 'wr')
                                     <input name="days" id="days-input" class="form-control" step="1" min="1" type="number"
                                            value="90" readonly/>
                                     <small class="form-text text-muted">
@@ -223,6 +258,9 @@
                         <div class="btn-group btn-group-sm">
                             @if($flow === 'eb')
                             <a href="{{ route('authenticate-flow.index', ['eb']) }}" class="btn btn-secondary"><span
+                                    class="fas fa-arrow-left"></span> Go back to authentication</a>
+                            @elseif($flow === 'wr')
+                            <a href="{{ route('authenticate-flow.index', ['wr']) }}" class="btn btn-secondary"><span
                                     class="fas fa-arrow-left"></span> Go back to authentication</a>
                             @else
                             <a href="{{ route('new-import.index', [$identifier]) }}" class="btn btn-secondary"><span

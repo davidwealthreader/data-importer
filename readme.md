@@ -34,6 +34,8 @@
 
 The data importer does not connect to your bank directly. Instead, it uses [third party data providers](https://docs.firefly-iii.org/how-to/data-importer/import/third-party-providers/) to help you import data into Firefly III. Some of these providers are free of charge, others charge money.
 
+Wealthreader is one of those sources. The numbers on [wealthreader.com/pricing](https://www.wealthreader.com/pricing/) are commercial volume plans (from €180/month). A Firefly III self-hoster with three or four bank accounts is billed per product actually read, so the bill stays far below that floor. You bring your own `WEALTHREADER_API_KEY`. Sandbox bank users are `MOCKDATA` (ok), `MOCKOTP` (OTP), and `MOCKLOGINKO` (login error).
+
 If you do not want to rely on third parties to import your data, you can import data using the following file formats:
 
 - CSV

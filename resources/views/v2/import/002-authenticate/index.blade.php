@@ -15,14 +15,19 @@
                     <div class="card-body">
                         <p>In order to import using {{ config('importer.providers.' . $flow . '.title') }} you must enter the authentication data you received from this provider. You can read how to get the necessary codes in the <a target="_blank" href="https://docs.firefly-iii.org/how-to/data-importer/import/third-party-providers/">documentation</a></p>
 
-                        @if('eb' === $flow)
+                        @if('eb' === $flow || 'wr' === $flow)
                             <p>
                                 Your redirect URL is:<br>
                                 <code>{{$route}}</code>
                             </p>
                             @if(!$isHttps)
                                 <div class="alert alert-warning" role="alert">
-                                    Your redirect URL does not start with <code>https://</code>. Enable Banking requires a secure redirect URL when using production data. You can either fake it and add https when configuring Enable Banking, or set up your local Data Importer to use https.
+                                    Your redirect URL does not start with <code>https://</code>.
+                                    @if('wr' === $flow)
+                                        Register this URL in the Wealthreader client area with access_type=oauth and tokenize=1. Prefer https in production.
+                                    @else
+                                        Enable Banking requires a secure redirect URL when using production data. You can either fake it and add https when configuring Enable Banking, or set up your local Data Importer to use https.
+                                    @endif
                                 </div>
                             @endif
                         @endif

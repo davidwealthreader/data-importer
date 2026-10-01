@@ -61,6 +61,10 @@ return [
     'placeholder_eb_private_key'    => 'Enable Banking Private Key (PEM format)',
     'help_eb_private_key'           => 'Paste your Enable Banking private key in PEM format',
 
+    'label_wr_api_key'              => 'Wealthreader API key',
+    'placeholder_wr_api_key'        => 'WEALTHREADER_API_KEY',
+    'help_wr_api_key'               => 'From the Wealthreader client area. Register the redirect URL below with access_type=oauth and tokenize=1.',
+
     // column roles for CSV import:
     'column__ignore'                => '(ignore this column)',
     'column_account-iban'           => 'Asset account (IBAN)',

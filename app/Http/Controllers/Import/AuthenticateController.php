@@ -27,6 +27,7 @@ namespace App\Http\Controllers\Import;
 use App\Exceptions\ImporterErrorException;
 use App\Http\Controllers\Controller;
 use App\Services\EnableBanking\AuthenticationValidator as EnableBankingValidator;
+use App\Services\Wealthreader\AuthenticationValidator as WealthreaderValidator;
 use App\Services\Enums\AuthenticationStatus;
 use App\Services\LunchFlow\AuthenticationValidator as LunchFlowValidator;
 use App\Services\Nordigen\AuthenticationValidator as NordigenValidator;
@@ -82,7 +83,7 @@ final class AuthenticateController extends Controller
         if (AuthenticationStatus::NODATA === $result) {
             // need to get and present the auth data in the system (yes it is always empty).
             $data    = $validator->getData();
-            $route   = route('eb-connect.callback');
+            $route   = 'wr' === $flow ? route('wr-connect.callback') : route('eb-connect.callback');
             $isHttps = str_starts_with($route, 'https://');
 
             return view('import.002-authenticate.index')->with(compact('mainTitle', 'flow', 'subTitle', 'pageTitle', 'data', 'error', 'route', 'isHttps'));
@@ -114,6 +115,9 @@ final class AuthenticateController extends Controller
 
             case 'eb':
                 return new EnableBankingValidator();
+
+            case 'wr':
+                return new WealthreaderValidator();
         }
 
         return null;

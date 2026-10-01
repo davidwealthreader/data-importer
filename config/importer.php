@@ -117,6 +117,13 @@ return [
             'explanation'               => '',
             'supports_new_accounts'     => true,
         ],
+        'wr'        => [
+            'title'                     => 'Wealthreader',
+            'enabled'                   => true,
+            'conversion_before_mapping' => true,
+            'explanation'               => 'European AIS. Bring your own api_key. A few personal accounts cost much less than the commercial plans on wealthreader.com/pricing.',
+            'supports_new_accounts'     => true,
+        ],
         'teller'    => [
             'title'                     => 'teller.io',
             'enabled'                   => false,

@@ -53,6 +53,11 @@ Route::post('/eb-select-bank/{identifier}', ['uses' => 'Import\EnableBanking\Sel
 Route::get('/eb-connect/{identifier}', ['uses' => 'Import\EnableBanking\LinkController@build', 'as' => 'eb-connect.index']);
 Route::get('/eb-callback', ['uses' => 'Import\EnableBanking\LinkController@callback', 'as' => 'eb-connect.callback']);
 
+Route::get('/wr-select-bank/{identifier}', ['uses' => 'Import\Wealthreader\SelectionController@index', 'as' => 'wr-select-bank.index']);
+Route::post('/wr-select-bank/{identifier}', ['uses' => 'Import\Wealthreader\SelectionController@postIndex', 'as' => 'wr-select-bank.post']);
+Route::get('/wr-connect/{identifier}', ['uses' => 'Import\Wealthreader\LinkController@build', 'as' => 'wr-connect.index']);
+Route::get('/wr-callback', ['uses' => 'Import\Wealthreader\LinkController@callback', 'as' => 'wr-connect.callback']);
+
 Route::get('/configure-roles/{identifier}', ['uses' => 'Import\File\RoleController@index', 'as' => 'configure-roles.index']);
 Route::post('/configure-roles/{identifier}', ['uses' => 'Import\File\RoleController@postIndex', 'as' => 'configure-roles.post']);
 
